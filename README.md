@@ -10,6 +10,12 @@ Welcome to the Corda Coin CorDapp. The CorDapp is built to demonstrate the usage
 
 See https://docs.corda.net/getting-set-up.html.
 
+# Build
+
+Run task "deployNodes" under examples/client-webserver project. The nodes together with CorDapps will be generated in:
+
+    examples/client-webserver/build/nodes
+
 # Usage
 
 ## Running the nodes

@@ -15,13 +15,13 @@ import java.util.*
 @CordaSerializable
 @BelongsToContract(CordaCoinTypeContract::class)
 data class CordaCoinType(
+        override val linearId: UniqueIdentifier = UniqueIdentifier.fromString(UUID.randomUUID().toString()),
         val name: String,
         val admin: Party,
         val nav: BigDecimal,
         val created: Instant = Instant.now()
 ) : EvolvableTokenType(), LinearState {
 
-    override val linearId: UniqueIdentifier = UniqueIdentifier.fromString(UUID.randomUUID().toString())
     override val maintainers: List<Party> get() = listOf(admin)
     override val participants: List<AbstractParty> get() = listOf(admin)
     override val fractionDigits = 2

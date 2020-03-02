@@ -15,10 +15,10 @@ import java.math.BigDecimal
 class CreateCordaCoinTypeFlow(
         private val name: String,
         private val nav: BigDecimal
-) : FlowLogic<SignedTransaction>() {
+) : FlowLogic<CordaCoinType>() {
 
     @Suspendable
-    override fun call(): SignedTransaction {
+    override fun call(): CordaCoinType {
         val notary = vaultServiceUtils.notary()
 
         val coinType = CordaCoinType (
@@ -28,9 +28,11 @@ class CreateCordaCoinTypeFlow(
         )
 
         val transactionState = coinType withNotary notary
-        return subFlow(CreateEvolvableTokens(
+        val signedTxn = subFlow(CreateEvolvableTokens(
                 transactionState = transactionState,
                 observers = emptyList()))
+
+        return signedTxn.coreTransaction.outRefsOfType<CordaCoinType>().single().state.data
     }
 }
 
