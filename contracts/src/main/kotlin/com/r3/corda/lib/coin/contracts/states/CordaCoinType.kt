@@ -27,7 +27,7 @@ data class CordaCoinType(
     override val fractionDigits = 2
 
     override fun toString(): String {
-        return "CordaCoinType(linearId=$linearId, name='$name', created=$created, admin=$admin, nav=$nav, fractionDigits=$fractionDigits)"
+        return "CordaCoinType(linearId=$linearId, name='$name', admin=$admin, nav=$nav, created=$created, fractionDigits=$fractionDigits)"
     }
 
 }
