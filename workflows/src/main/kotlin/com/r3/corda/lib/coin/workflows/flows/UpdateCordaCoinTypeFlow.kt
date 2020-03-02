@@ -3,7 +3,8 @@ package com.r3.corda.lib.coin.workflows.flows
 import co.paralleluniverse.fibers.Suspendable
 import com.r3.corda.lib.coin.contracts.states.CordaCoinType
 import com.r3.corda.lib.coin.workflows.utils.vaultServiceUtils
-import com.r3.corda.lib.tokens.workflows.flows.rpc.UpdateEvolvableToken
+import com.r3.corda.lib.tokens.workflows.flows.evolvable.UpdateEvolvableTokenFlow
+import com.r3.corda.lib.tokens.workflows.flows.evolvable.UpdateEvolvableTokenFlowHandler
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -39,13 +40,14 @@ class UpdateCordaCoinTypeFlow(
                 name = if (name.isEmpty()) state.name else name,
                 nav = if (nav == BigDecimal.ZERO) state.nav else nav
         )
-
-        return subFlow(UpdateEvolvableToken(
+        val observerSessions = newObservers.map { initiateFlow(it) }
+        return subFlow(UpdateEvolvableTokenFlow(
                 oldStateAndRef = stateRef,
                 newState = newCoinType,
+                participantSessions = emptyList(),
 
                 // mind: you cannot remove observers from existing list, you can only add or keep
-                observers = newObservers)
+                observerSessions = observerSessions)
         )
     }
 }
@@ -54,5 +56,6 @@ class UpdateCordaCoinTypeFlow(
 class UpdateCordaCoinTypeFlowHandler(private val otherSession: FlowSession) : FlowLogic<Unit>() {
     @Suspendable
     override fun call() {
+        subFlow(UpdateEvolvableTokenFlowHandler(otherSession))
     }
 }

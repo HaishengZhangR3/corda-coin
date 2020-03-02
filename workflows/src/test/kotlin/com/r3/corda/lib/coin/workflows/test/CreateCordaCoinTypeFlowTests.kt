@@ -31,7 +31,7 @@ class CreateCordaCoinTypeFlowTests {
     }
 
     @Test
-    fun `should be possible to create a chat`() {
+    fun `test 1`() {
 
         val flow = nodeA.startFlow(CreateCordaCoinTypeFlow(
                 name = "subject",

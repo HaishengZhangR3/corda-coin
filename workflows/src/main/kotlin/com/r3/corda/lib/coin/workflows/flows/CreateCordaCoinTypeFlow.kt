@@ -4,7 +4,8 @@ import co.paralleluniverse.fibers.Suspendable
 import com.r3.corda.lib.coin.contracts.states.CordaCoinType
 import com.r3.corda.lib.coin.workflows.utils.vaultServiceUtils
 import com.r3.corda.lib.tokens.contracts.utilities.withNotary
-import com.r3.corda.lib.tokens.workflows.flows.rpc.CreateEvolvableTokens
+import com.r3.corda.lib.tokens.workflows.flows.evolvable.CreateEvolvableTokensFlow
+import com.r3.corda.lib.tokens.workflows.flows.evolvable.CreateEvolvableTokensFlowHandler
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import java.math.BigDecimal
@@ -33,9 +34,11 @@ class CreateCordaCoinTypeFlow(
         )
 
         val transactionState = coinType withNotary notary
-        val signedTxn = subFlow(CreateEvolvableTokens(
+        val observerSessions = observers.map { initiateFlow(it) }
+        val signedTxn = subFlow(CreateEvolvableTokensFlow(
                 transactionState = transactionState,
-                observers = observers))
+                participantSessions = emptyList(),
+                observerSessions = observerSessions))
 
         return signedTxn.coreTransaction.outRefsOfType<CordaCoinType>().single().state.data
     }
@@ -46,5 +49,6 @@ class CreateCordaCoinTypeFlow(
 class CreateCordaCoinTypeFlowHandler(private val otherSession: FlowSession) : FlowLogic<Unit>() {
     @Suspendable
     override fun call() {
+        subFlow(CreateEvolvableTokensFlowHandler(otherSession))
     }
 }
