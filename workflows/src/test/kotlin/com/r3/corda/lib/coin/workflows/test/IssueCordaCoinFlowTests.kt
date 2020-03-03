@@ -1,10 +1,10 @@
 package com.r3.corda.lib.coin.workflows.test
 
-import com.r3.corda.lib.coin.contracts.states.CordaCoin
 import com.r3.corda.lib.coin.workflows.flows.ConfidentialIssueCordaCoinFlow
 import com.r3.corda.lib.coin.workflows.flows.CreateCordaCoinTypeFlow
 import com.r3.corda.lib.coin.workflows.flows.IssueCordaCoinFlow
 import com.r3.corda.lib.coin.workflows.flows.IssueCordaCoinsFlow
+import com.r3.corda.lib.tokens.contracts.states.FungibleToken
 import net.corda.core.identity.AnonymousParty
 import net.corda.core.identity.Party
 import net.corda.core.utilities.getOrThrow
@@ -59,7 +59,7 @@ class IssueCordaCoinFlowTests {
         issueFlow.getOrThrow()
 
         //check whether the created one is right
-        val coin = nodeA.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+        val coin = nodeA.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
 
         // same chat session in two nodes should have same participants
         assert(0 == amount.compareTo(coin.amount.toDecimal()),
@@ -95,19 +95,19 @@ class IssueCordaCoinFlowTests {
         issueFlow.getOrThrow()
 
         // in B
-        val coinb = nodeB.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+        val coinb = nodeB.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
         assert(0 == amount.compareTo(coinb.amount.toDecimal()),
                 {"${amount}, ${coinb.amount.toDecimal()}"})
         assert(coinb.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()))
 
         // in C
-        val coinc = nodeC.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+        val coinc = nodeC.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
         assert(0 == amount.compareTo(coinb.amount.toDecimal()),
                 {"${amount}, ${coinb.amount.toDecimal()}"})
         assert(coinc.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()))
 
         // in D
-        val coind = nodeD.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+        val coind = nodeD.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
         assert(0 == amount.compareTo(coind.amount.toDecimal()),
                 {"${amount}, ${coind.amount.toDecimal()}"})
         assert(coind.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()))
@@ -132,8 +132,7 @@ class IssueCordaCoinFlowTests {
         network.runNetwork()
         issueFlow.getOrThrow()
 
-        //check whether the created one is right
-        val coin = nodeA.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+        val coin = nodeA.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
 
         // same chat session in two nodes should have same participants
         assert(0 == amount.compareTo(coin.amount.toDecimal()),
@@ -203,8 +202,8 @@ class IssueCordaCoinFlowTests {
 
     }
 
-    private fun getStates(node: StartedMockNode): List<CordaCoin> {
-        val statesAndRef = node.services.vaultService.queryBy(CordaCoin::class.java).states
+    private fun getStates(node: StartedMockNode): List<FungibleToken> {
+        val statesAndRef = node.services.vaultService.queryBy(FungibleToken::class.java).states
         return statesAndRef.map { it.state.data }
     }
 

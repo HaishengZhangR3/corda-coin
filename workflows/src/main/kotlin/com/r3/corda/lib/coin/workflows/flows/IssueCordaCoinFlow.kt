@@ -1,9 +1,9 @@
 package com.r3.corda.lib.coin.workflows.flows
 
 import co.paralleluniverse.fibers.Suspendable
-import com.r3.corda.lib.coin.contracts.states.CordaCoin
 import com.r3.corda.lib.coin.workflows.utils.vaultServiceUtils
 import com.r3.corda.lib.coin.contracts.states.CordaCoinType
+import com.r3.corda.lib.tokens.contracts.states.FungibleToken
 import com.r3.corda.lib.tokens.contracts.utilities.issuedBy
 import com.r3.corda.lib.tokens.contracts.utilities.of
 import com.r3.corda.lib.tokens.workflows.flows.issue.ConfidentialIssueTokensFlow
@@ -45,10 +45,9 @@ class IssueCordaCoinFlow(
         val coinTypePointer = coinType.toPointer<CordaCoinType>()
         val issuedAmount = amount of coinTypePointer issuedBy ourIdentity
 
-        val coin = CordaCoin(
+        val coin = FungibleToken(
                 amount = issuedAmount,
-                holder = holder,
-                note = note
+                holder = holder
         )
 
         // If you are issuing to self, there is no need to pass in a flow session.
@@ -97,13 +96,12 @@ class IssueCordaCoinsFlow(
 
         require(amounts.size == holders.size) {"Amounts should match holders size."}
 
-        val amountAndHolder: MutableList<CordaCoin> = mutableListOf()
+        val amountAndHolder: MutableList<FungibleToken> = mutableListOf()
         for (i in amounts.indices) {
             val issuedAmount = amounts[i] of coinTypePointer issuedBy ourIdentity
-            val coin = CordaCoin(
+            val coin = FungibleToken(
                     amount = issuedAmount,
-                    holder = holders[i],
-                    note = note
+                    holder = holders[i]
             )
             amountAndHolder.add(coin)
         }
@@ -157,13 +155,12 @@ class ConfidentialIssueCordaCoinFlow(
         val coinTypePointer = coinType.toPointer<CordaCoinType>()
         val issuedAmount = amount of coinTypePointer issuedBy ourIdentity
 
-        val coin = CordaCoin(
+        val coin = FungibleToken(
                 amount = issuedAmount,
-                holder = holder,
-                note = note
+                holder = holder
         )
 
-        // You'd see that both ConfidentialIssueTokensFlow and IssueTokensFlow are quite simila,
+        // You'd see that both ConfidentialIssueTokensFlow and IssueTokensFlow are quite similar,
         // the two differences you'd see are:
         //    - No matter whether you are issuing to self or others, you must pass the participants session in Confidential version
         //    - After issuance, the coin holder is AnonymousParty (in Confidential version) instead of Party (in non-Confidential version)
