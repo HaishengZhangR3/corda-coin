@@ -1,9 +1,12 @@
 package com.r3.corda.lib.coin.workflows.test
 
 import com.r3.corda.lib.coin.contracts.states.CordaCoin
+import com.r3.corda.lib.coin.workflows.flows.ConfidentialIssueCordaCoinFlow
 import com.r3.corda.lib.coin.workflows.flows.CreateCordaCoinTypeFlow
 import com.r3.corda.lib.coin.workflows.flows.IssueCordaCoinFlow
 import com.r3.corda.lib.coin.workflows.flows.IssueCordaCoinsFlow
+import net.corda.core.identity.AnonymousParty
+import net.corda.core.identity.Party
 import net.corda.core.utilities.getOrThrow
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.StartedMockNode
@@ -55,7 +58,7 @@ class IssueCordaCoinFlowTests {
         network.runNetwork()
         issueFlow.getOrThrow()
 
-        //check whether the created one in node B is same as that in the DB of host node A
+        //check whether the created one is right
         val coin = nodeA.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
 
         // same chat session in two nodes should have same participants
@@ -64,6 +67,8 @@ class IssueCordaCoinFlowTests {
         assert(coin.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()),
                 {"${coin.amount.token.tokenType.tokenIdentifier}, ${typeId.linearId}"})
 
+        assert(coin.holder is Party)
+        assert(coin.holder !is AnonymousParty)
     }
 
     @Test
@@ -110,7 +115,39 @@ class IssueCordaCoinFlowTests {
     }
 
     @Test
-    fun `list test 2`() {
+    fun confidential_test() {
+        val createFlow = nodeA.startFlow(CreateCordaCoinTypeFlow(
+                name = "subject",
+                nav = BigDecimal(8)
+        ))
+        network.runNetwork()
+        val typeId = createFlow.getOrThrow()
+        val amount = BigDecimal(100.00)
+
+        val issueFlow = nodeA.startFlow(ConfidentialIssueCordaCoinFlow(
+                coinTypeId = typeId.linearId,
+                amount = amount,
+                holder = nodeA.info.legalIdentities.first()
+        ))
+        network.runNetwork()
+        issueFlow.getOrThrow()
+
+        //check whether the created one is right
+        val coin = nodeA.services.vaultService.queryBy(CordaCoin::class.java).states.single().state.data
+
+        // same chat session in two nodes should have same participants
+        assert(0 == amount.compareTo(coin.amount.toDecimal()),
+                {"${amount}, ${coin.amount.toDecimal()}"})
+        assert(coin.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()),
+                {"${coin.amount.token.tokenType.tokenIdentifier}, ${typeId.linearId}"})
+
+        assert(coin.holder !is Party)
+        assert(coin.holder is AnonymousParty)
+
+    }
+
+    @Test
+    fun `list test 1`() {
 
         val createFlow = nodeA.startFlow(CreateCordaCoinTypeFlow(
                 name = "subject",

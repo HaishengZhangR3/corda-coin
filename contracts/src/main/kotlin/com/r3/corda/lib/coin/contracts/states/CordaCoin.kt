@@ -21,4 +21,14 @@ class CordaCoin(
     override fun toString(): String {
         return "CordaCoin(amount=$amount, holder=$holder, note='$note')"
     }
+
+    // ConfidentialIssueTokensFlow will call ConfidentialTokensFlow, which
+    // will duplicate a new FungibleToken instance using:
+    //          token.withNewHolder(anonymousParty)
+    // so, I have to override withNewHolder to generate a CordaCoin instance
+    // instead of FungibleToken instance
+    override fun withNewHolder(newHolder: AbstractParty): FungibleToken {
+        return CordaCoin(amount = amount, holder = newHolder, note = note)
+    }
+
 }

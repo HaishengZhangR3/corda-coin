@@ -7,6 +7,7 @@ import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.math.BigDecimal
 
+// Here, you must implement Contract interface, otherwise there'll be runtime error
 class CordaCoinTypeContract : EvolvableTokenContract(), Contract {
     companion object {
         @JvmStatic
