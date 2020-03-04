@@ -29,13 +29,12 @@ class IssueCordaCoinFlow(
         private val coinTypeId: UniqueIdentifier,
         private val amount: BigDecimal,
         private val holder: Party,
-        private val note: String,
         private val participants: List<Party>,
         private val observers: List<Party>
 ) : FlowLogic<SignedTransaction>() {
 
     constructor(coinTypeId: UniqueIdentifier, amount: BigDecimal, holder: Party)
-            : this (coinTypeId = coinTypeId, amount = amount, holder = holder, note = "",
+            : this (coinTypeId = coinTypeId, amount = amount, holder = holder,
                 participants = emptyList(), observers = emptyList())
 
     @Suspendable
@@ -79,14 +78,13 @@ class IssueCordaCoinsFlow(
         private val coinTypeId: UniqueIdentifier,
         private val amounts: List<BigDecimal>,
         private val holders: List<Party>,
-        private val note: String,
         private val participants: List<Party>,
         private val observers: List<Party>
 ) : FlowLogic<SignedTransaction>() {
 
     constructor(coinTypeId: UniqueIdentifier, amounts: List<BigDecimal>, holders: List<Party>)
             : this (coinTypeId = coinTypeId, amounts = amounts, holders = holders,
-            note = "", participants = emptyList(), observers = emptyList())
+            participants = emptyList(), observers = emptyList())
 
     @Suspendable
     override fun call(): SignedTransaction {
@@ -139,13 +137,12 @@ class ConfidentialIssueCordaCoinFlow(
         private val coinTypeId: UniqueIdentifier,
         private val amount: BigDecimal,
         private val holder: Party,
-        private val note: String,
         private val participants: List<Party>,
         private val observers: List<Party>
 ) : FlowLogic<SignedTransaction>() {
 
     constructor(coinTypeId: UniqueIdentifier, amount: BigDecimal, holder: Party)
-            : this (coinTypeId = coinTypeId, amount = amount, holder = holder, note = "",
+            : this (coinTypeId = coinTypeId, amount = amount, holder = holder,
             participants = emptyList(), observers = emptyList())
 
     @Suspendable

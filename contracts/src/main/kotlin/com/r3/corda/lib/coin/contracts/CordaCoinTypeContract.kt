@@ -7,7 +7,8 @@ import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.math.BigDecimal
 
-// Here, you must implement Contract interface, otherwise there'll be runtime error
+// Here, you must implement Contract interface beside of inheriting EvolvableTokenContract(),
+// otherwise there'll be runtime error
 class CordaCoinTypeContract : EvolvableTokenContract(), Contract {
     companion object {
         @JvmStatic
@@ -20,7 +21,7 @@ class CordaCoinTypeContract : EvolvableTokenContract(), Contract {
 
     override fun additionalCreateChecks(tx: LedgerTransaction) {
         requireThat {
-            "Must be no input in creating coin type." using (tx.inputStates.size == 0)
+            "Must be no input in creating coin type." using (tx.inputStates.isEmpty())
             "Must be only one output in creating coin type." using (tx.outputStates.size == 1)
             "Coin type must match." using (tx.outputStates.single() is CordaCoinType)
 

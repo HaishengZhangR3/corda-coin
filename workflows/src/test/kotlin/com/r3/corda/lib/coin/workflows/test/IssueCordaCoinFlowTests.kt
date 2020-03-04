@@ -61,7 +61,6 @@ class IssueCordaCoinFlowTests {
         //check whether the created one is right
         val coin = nodeA.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
 
-        // same chat session in two nodes should have same participants
         assert(0 == amount.compareTo(coin.amount.toDecimal()),
                 {"${amount}, ${coin.amount.toDecimal()}"})
         assert(coin.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()),
@@ -86,7 +85,6 @@ class IssueCordaCoinFlowTests {
                 coinTypeId = typeId.linearId,
                 amount = amount,
                 holder = nodeB.info.legalIdentities.first(),
-                note = "a new coin",
                 participants = listOf(nodeB.info.legalIdentities.first(),
                         nodeC.info.legalIdentities.first()),
                 observers = listOf(nodeD.info.legalIdentities.first())
@@ -134,7 +132,6 @@ class IssueCordaCoinFlowTests {
 
         val coin = nodeA.services.vaultService.queryBy(FungibleToken::class.java).states.single().state.data
 
-        // same chat session in two nodes should have same participants
         assert(0 == amount.compareTo(coin.amount.toDecimal()),
                 {"${amount}, ${coin.amount.toDecimal()}"})
         assert(coin.amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()),
@@ -161,7 +158,6 @@ class IssueCordaCoinFlowTests {
              coinTypeId = typeId.linearId,
              amounts = amounts,
              holders = holders,
-             note = "a new coin",
              participants = listOf(nodeC.info.legalIdentities.first()),
              observers = listOf(nodeD.info.legalIdentities.first())
         ))
@@ -190,7 +186,7 @@ class IssueCordaCoinFlowTests {
             assert(coinc[i].amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()))
         }
 
-        // in C
+        // in D
         val coind = getStates(nodeD)
         val amountsd = coind.map { it.amount.toDecimal() }.sorted()
         assertEquals(amountsd.size, amounts.size)
@@ -199,7 +195,6 @@ class IssueCordaCoinFlowTests {
             assert(0 == amounts[i].compareTo(amountsd[i]), {"${amounts[i]}, ${amountsd[i]}"})
             assert(coind[i].amount.token.tokenType.tokenIdentifier.equals(typeId.linearId.toString()))
         }
-
     }
 
     private fun getStates(node: StartedMockNode): List<FungibleToken> {

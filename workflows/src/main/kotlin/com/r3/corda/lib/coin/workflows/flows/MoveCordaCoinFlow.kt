@@ -21,10 +21,10 @@ import java.math.BigDecimal
 
 
 // If you move token, refer to this flow: MoveCordaCoinFlow
-// If you want move token confidentially, refer to this flow: ConfidentialMoveCordaCoinFlow
+// If you move token confidentially, refer to this flow: ConfidentialMoveCordaCoinFlow
 // If you specify query criteria when moving, refer to CriteriaMoveCordaCoinFlow
 
-// As alwsya, those flows are very similar, but I purposely did not re-use the code for an easier reference
+// As always, those flows are very similar, but I purposely did not re-use the code for an easier reference
 
 @InitiatingFlow
 @StartableByService
@@ -91,9 +91,9 @@ class ConfidentialMoveCordaCoinFlow(
         val participantSessions = listOf(moveHolder, finalChangeHolder).toSet().map { initiateFlow(it) }
 
         // To call Confidential version, you must specify a changeHolder,
-        // which IMO should not design this way
+        // which IMO should not be designed this way
 
-        // changeHolder must reside in the same node as the caller
+        // changeHolder must reside in the same node as the caller, otherwise it is not allowed
         return subFlow(ConfidentialMoveFungibleTokensFlow(
                 partyAndAmount = partyAndAmount,
                 participantSessions = participantSessions,
@@ -175,10 +175,7 @@ class CriteriaMoveCordaCoinFlow(
             true -> holderCriteria.and(tokenClassCriteria).and(tokenIdentifierCriteria)
             false -> {
                 // Amount in DB is the [real amount] * [10^fractionDigits] (which is 2), therefore,
-                // the amount in DB represents the amount passed in * 100
-                // Also, the validation of range is quite simple:
-                //      ignore the check if: start == end == 0
-                //      pass in simply without other check
+                // the amount in DB represents the (amount passed in) * 100
                 val rangeCriteria = QueryCriteria.VaultCustomQueryCriteria(
                         builder {
                             PersistentFungibleToken::amount.between(

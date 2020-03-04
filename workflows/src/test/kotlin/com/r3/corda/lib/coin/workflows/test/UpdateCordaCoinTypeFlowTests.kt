@@ -55,14 +55,9 @@ class UpdateCordaCoinTypeFlowTests {
 
         //check whether the created one in node B is same as that in the DB of host node A
         val typeA = nodeA.services.vaultService.queryBy(CordaCoinType::class.java).states.single().state.data
-
-        // same chat session in two nodes should have same participants
         assert(BigDecimal(10).equals(typeA.nav))
 
-        //check whether the created one in node B is same as that in the DB of host node A
         val typeB = nodeB.services.vaultService.queryBy(CordaCoinType::class.java).states.single().state.data
-
-        // same chat session in two nodes should have same participants
         assert(BigDecimal(10).equals(typeB.nav))
     }
 }

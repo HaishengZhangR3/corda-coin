@@ -89,7 +89,6 @@ class RedeemCordaCoinFlowTests {
         assertBigDecimalEqual(BigDecimal(70), coinb.amount.toDecimal())
         assert(coinb.holder is Party && coinb.holder !is AnonymousParty)
 
-
         val redeemFlow2 = nodeB.startFlow(RedeemCordaCoinFlow(
                 amount = BigDecimal(70),
                 issuer = partyA
