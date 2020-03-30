@@ -25,14 +25,17 @@ class CreateCordaCoinTypeFlow(
 
     @Suspendable
     override fun call(): CordaCoinType {
+        logger.info("Select the notary in your network.")
         val notary = vaultServiceUtils.notary()
 
+        logger.info("Construct coin type to be created.")
         val coinType = CordaCoinType (
                 name = name,
                 admin = ourIdentity,
                 nav = nav
         )
 
+        logger.info("Call subFlow to do it.")
         val transactionState = coinType withNotary notary
         val observerSessions = observers.map { initiateFlow(it) }
         val signedTxn = subFlow(CreateEvolvableTokensFlow(
@@ -40,6 +43,7 @@ class CreateCordaCoinTypeFlow(
                 participantSessions = emptyList(),
                 observerSessions = observerSessions))
 
+        logger.info("All done! Just return the coin type we created.")
         return signedTxn.coreTransaction.outRefsOfType<CordaCoinType>().single().state.data
     }
 }
